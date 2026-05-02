@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "evergreen-notebook": {
+      "command": "node",
+      "args": ["/absolute/path/to/evergreen-notebook-mcp/server.mjs"]
+    }
+  }
+}
+

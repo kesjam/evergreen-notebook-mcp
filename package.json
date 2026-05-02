@@ -1,0 +1,28 @@
+{
+  "name": "evergreen-notebook-mcp",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Privacy-safe MCP tools and an agent skill for better NotebookLM workflows.",
+  "bin": {
+    "evergreen-notebook-mcp": "./server.mjs"
+  },
+  "scripts": {
+    "check": "node --check server.mjs",
+    "smoke": "node scripts/smoke-test.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "notebooklm",
+    "google-notebook",
+    "ai-workflow",
+    "source-packs",
+    "agent-skill"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
+

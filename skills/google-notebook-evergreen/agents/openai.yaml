@@ -1,0 +1,4 @@
+display_name: Google Notebook Evergreen
+short_description: Build durable NotebookLM source, chat, and Studio workflows.
+default_prompt: Prepare a NotebookLM workflow with clean sources, explicit caveats, customized Studio prompts, and a grounding verification question.
+
