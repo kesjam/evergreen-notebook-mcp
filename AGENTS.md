@@ -8,6 +8,8 @@ This repo provides a privacy-safe MCP server and reusable skill for NotebookLM w
 - Do not add Google login, cookie scraping, hidden NotebookLM API calls, or work-site scraping.
 - Preserve compatibility with generic MCP stdio clients.
 - Keep outputs grounded: source packs, prompts, runbooks, caveats, and validation.
+- For full notebook generation, use the agentic loop in `docs/agentic-notebook-generation.md`.
+- Prefer creative use cases only when they remain source-grounded and privacy-safe.
 - Use examples that are synthetic and safe to publish.
 
 ## Validation
@@ -20,4 +22,3 @@ npm run smoke
 ```
 
 Before release, scan for secrets or workplace-specific content.
-

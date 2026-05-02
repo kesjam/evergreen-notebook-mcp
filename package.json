@@ -25,10 +25,11 @@
     "notebooklm",
     "google-notebook",
     "ai-workflow",
+    "agentic-workflow",
+    "prompt-library",
     "source-packs",
     "agent-skill"
   ],
-  "author": "",
   "license": "MIT",
   "engines": {
     "node": ">=18"

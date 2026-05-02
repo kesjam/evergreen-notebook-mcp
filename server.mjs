@@ -4,6 +4,125 @@ const SERVER_NAME = "evergreen-notebook-mcp";
 const SERVER_VERSION = "0.1.0";
 const DEFAULT_PROTOCOL = "2025-11-25";
 
+const ALL_ARTIFACT_TYPES = [
+  "source_pack",
+  "source_guide",
+  "chat_grounding",
+  "notes",
+  "data_table",
+  "report",
+  "briefing_doc",
+  "study_guide",
+  "faq",
+  "infographic",
+  "slide_deck",
+  "audio_overview",
+  "video_overview",
+  "flashcards",
+  "quiz",
+  "mind_map"
+];
+
+const ARTIFACT_LABELS = {
+  source_pack: "Source Pack",
+  source_guide: "Source Guide",
+  chat_grounding: "Chat Grounding Check",
+  notes: "Notes",
+  data_table: "Data Table",
+  report: "Report",
+  briefing_doc: "Briefing Document",
+  study_guide: "Study Guide",
+  faq: "FAQ",
+  infographic: "Infographic",
+  slide_deck: "Slide Deck",
+  audio_overview: "Audio Overview",
+  video_overview: "Video Overview",
+  flashcards: "Flashcards",
+  quiz: "Quiz",
+  mind_map: "Mind Map"
+};
+
+const AGENTIC_USAGE_TEXT = `# Agentic NotebookLM Usage
+
+Use NotebookLM as a source-grounded studio, not as a generic chatbot.
+
+## Research-Backed Loop
+
+1. Define the decision, audience, evidence boundary, and success criteria.
+2. Prepare source packs with facts, definitions, assumptions, caveats, and suggested questions.
+3. Add sources through the visible UI when privacy or workplace boundaries matter.
+4. Ask a grounding check before generating Studio artifacts.
+5. Generate table/report artifacts before narrative or multimedia artifacts.
+6. Customize every artifact with audience, thesis, numeric anchors, source focus, caveats, and output format.
+7. Verify outputs by asking what is unsupported, missing, or easy to misread.
+
+## Prompt Anatomy
+
+Use this structure for most NotebookLM prompts:
+
+- Role: what kind of analyst, teacher, storyteller, or reviewer the artifact should emulate.
+- Task: the exact artifact and what it must accomplish.
+- Context: audience, source titles, evidence boundary, definitions, and assumptions.
+- Requirements: columns, sections, beats, visual style, length, tone, and required caveats.
+- Guardrail: use only selected sources; say "not in source" when evidence is missing.
+- Verification: list numeric anchors, caveats, and confidence notes.
+
+## Agentic Patterns
+
+- Prompt chaining: source pack -> grounding check -> table/report -> multimedia/story artifacts.
+- Routing: send quantitative work to Data Tables, teaching work to study aids, executive work to reports/slides, emotional orientation to audio/video.
+- Parallelization: draft artifact prompts independently, then compare them for contradictions.
+- Evaluator-optimizer: after each artifact, ask NotebookLM to critique unsupported claims and regenerate with tighter instructions.
+- Human checkpoint: confirm before publishing, sharing, or moving sensitive data to a new destination.
+`;
+
+const ARTIFACT_LIBRARY_TEXT = `# NotebookLM Artifact Prompt Library
+
+## Data Table
+Ask for explicit rows and columns. Include evidence, confidence, caveat, and practical meaning columns so the table can be exported and audited.
+
+## Reports
+Give the report a thesis, source boundary, evidence map, limits, competing interpretations, and action plan. Use "not in source" for unsupported claims.
+
+## Briefing Document
+Optimize for a busy decision-maker: what changed, why it matters, what is uncertain, and what to do next.
+
+## Study Guide, FAQ, Quiz, Flashcards
+Teach the material and test judgment. Include traps that reject false certainty and unsupported extrapolation.
+
+## Infographic
+Specify orientation, detail level, visual zones, exact numeric anchors, and a caveat strip. Ask for a useful visual summary rather than decoration.
+
+## Slide Deck
+Specify the story arc, deck format, audience, length, source boundary, and what each slide should make easier to decide.
+
+## Audio Overview
+Choose a format such as deep dive, brief, critique, or debate. Give hosts a role, listener context, tone, focus, and uncertainty language.
+
+## Video Overview
+Choose format, visual style, scene order, narration tone, and the misconception the video should correct. Expect generation to take longer than other artifacts.
+
+## Mind Map
+If custom prompting is unavailable, improve source packs and selected sources before generating. Use it to discover structure, not to prove conclusions.
+
+## Notes
+Use notes as working memory. Save useful chat answers, then convert notes to sources when they should influence future artifacts.
+`;
+
+const COOL_USE_CASES_TEXT = `# Cool NotebookLM Use Cases
+
+- Decision room: source packs, data table, briefing doc, slide deck, and grounding questions for a real decision.
+- Pattern detective: operational logs or historical records turned into probability windows, caveat-aware infographics, and "what would change the answer" checks.
+- Meeting-to-execution: transcripts into action tables, owner risk maps, follow-up briefs, and stakeholder audio summaries.
+- Competitive teardown: pricing pages, docs, reviews, and changelogs into comparison tables, debate audio, and executive slides.
+- Study cockpit: syllabus, notes, readings, and past exams into a mind map, flashcards, quizzes, and misconception reports.
+- Research dossier: papers and reports into evidence tables, gaps, and visual abstracts.
+- Onboarding simulator: policy docs and workflows into role-specific FAQs, scenario quizzes, and "day one" video explainers.
+- Incident review: logs, timelines, retrospectives, and policies into root-cause tables, briefing docs, and corrective-action decks.
+- Creator studio: long research corpus into a script outline, critique audio, visual explainer, FAQ, and reusable source-backed content calendar.
+- Personal knowledge base: receipts, notes, manuals, plans, and preferences into searchable projects with grounded summaries and checklists.
+`;
+
 const resources = {
   "google-notebook://workflow": {
     name: "Google Notebook Evergreen Workflow",
@@ -21,16 +140,22 @@ const resources = {
   "google-notebook://studio-patterns": {
     name: "NotebookLM Studio Prompt Patterns",
     mimeType: "text/markdown",
-    text: `# Studio Prompt Patterns
-
-Data Table: metric, period, value, evidence, confidence, caveat, practical meaning.
-Infographic: dashboard zones, exact anchors, visual hierarchy, caveat strip.
-Slide Deck: human question, data boundary, trend, bottleneck, decision playbook.
-Audio: human opening, analyst hosts, plain-English uncertainty.
-Video: format, scene order, visual metaphors, misconception correction.
-Report: thesis, evidence, limits, alternatives, action plan, evidence/caveat table.
-Quiz/Flashcards: reasoning plus trap questions against overclaiming.
-`
+    text: ARTIFACT_LIBRARY_TEXT
+  },
+  "google-notebook://agentic-usage": {
+    name: "Agentic NotebookLM Usage Tips",
+    mimeType: "text/markdown",
+    text: AGENTIC_USAGE_TEXT
+  },
+  "google-notebook://artifact-prompt-library": {
+    name: "NotebookLM Artifact Prompt Library",
+    mimeType: "text/markdown",
+    text: ARTIFACT_LIBRARY_TEXT
+  },
+  "google-notebook://cool-use-cases": {
+    name: "Cool NotebookLM Use Cases",
+    mimeType: "text/markdown",
+    text: COOL_USE_CASES_TEXT
   },
   "google-notebook://safety": {
     name: "NotebookLM Safety and Boundary Notes",
@@ -91,7 +216,7 @@ const toolDefinitions = [
       properties: {
         artifactType: {
           type: "string",
-          enum: ["data_table", "infographic", "slide_deck", "audio_overview", "video_overview", "report", "quiz", "flashcards", "mind_map"]
+          enum: ALL_ARTIFACT_TYPES
         },
         title: { type: "string" },
         thesis: { type: "string" },
@@ -102,6 +227,34 @@ const toolDefinitions = [
         sections: { type: "array", items: { type: "string" } },
         visualDirections: { type: "array", items: { type: "string" } },
         decisionUse: { type: "string", description: "What the artifact should help decide." }
+      }
+    }
+  },
+  {
+    name: "build_artifact_prompt_pack",
+    title: "Build Full Artifact Prompt Pack",
+    description: "Create a complete NotebookLM prompt pack for source prep, chat, Studio artifacts, study outputs, multimedia, and verification.",
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: true
+    },
+    inputSchema: {
+      type: "object",
+      additionalProperties: false,
+      required: ["title", "objective"],
+      properties: {
+        title: { type: "string", description: "Notebook or project title." },
+        objective: { type: "string", description: "Decision, learning goal, or production goal for the notebook." },
+        thesis: { type: "string", description: "Core claim or hypothesis to test against sources." },
+        audience: { type: "string", description: "Who the notebook outputs are for." },
+        evidenceBoundary: { type: "string", description: "Date range, source limits, collection method, or confidence boundary." },
+        decisionUse: { type: "string", description: "What the artifacts should help someone decide or understand." },
+        tone: { type: "string", description: "Preferred tone for generated prompts." },
+        sourceTitles: { type: "array", items: { type: "string" }, description: "Known or planned NotebookLM source titles." },
+        keyFacts: { type: "array", items: { type: "string" }, description: "Facts or numeric anchors that artifacts should preserve." },
+        caveats: { type: "array", items: { type: "string" }, description: "Required caveats, assumptions, or missing-data notes." },
+        artifactTypes: { type: "array", items: { type: "string", enum: ALL_ARTIFACT_TYPES }, description: "Artifacts to include. Defaults to all." },
+        includeUseCases: { type: "boolean", default: true, description: "Include creative use-case ideas at the end." }
       }
     }
   },
@@ -122,6 +275,27 @@ const toolDefinitions = [
         sourceTitles: { type: "array", items: { type: "string" } },
         studioArtifacts: { type: "array", items: { type: "string" } },
         verificationQuestion: { type: "string" }
+      }
+    }
+  },
+  {
+    name: "suggest_notebook_use_cases",
+    title: "Suggest NotebookLM Use Cases",
+    description: "Generate creative, source-grounded NotebookLM use cases for a domain, audience, and source mix.",
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: true
+    },
+    inputSchema: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        domain: { type: "string", description: "Domain or project area." },
+        audience: { type: "string", description: "Who will use the notebook." },
+        goals: { type: "array", items: { type: "string" }, description: "Desired outcomes." },
+        sourceTypes: { type: "array", items: { type: "string" }, description: "Available source types." },
+        count: { type: "number", default: 10 },
+        riskLevel: { type: "string", enum: ["low", "medium", "high"], default: "medium" }
       }
     }
   },
@@ -186,6 +360,22 @@ const promptDefinitions = [
       { name: "artifact", description: "Artifact type.", required: true },
       { name: "decision", description: "Decision the artifact should support.", required: false }
     ]
+  },
+  {
+    name: "full-notebook-generation-plan",
+    description: "Prompt an agent to create a full source-to-Studio NotebookLM generation plan.",
+    arguments: [
+      { name: "topic", description: "Notebook topic.", required: true },
+      { name: "audience", description: "Target audience.", required: false }
+    ]
+  },
+  {
+    name: "use-case-brainstorm",
+    description: "Prompt an agent to generate creative but source-grounded NotebookLM use cases.",
+    arguments: [
+      { name: "domain", description: "Domain or project area.", required: true },
+      { name: "audience", description: "Target audience.", required: false }
+    ]
   }
 ];
 
@@ -230,7 +420,7 @@ ${asNumberList(args.questions)}
 }
 
 function artifactLabel(type) {
-  return type.split("_").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
+  return ARTIFACT_LABELS[type] || type.split("_").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
 }
 
 function buildStudioPrompt(args) {
@@ -260,6 +450,269 @@ Required caveats:
 ${caveats}
 
 ${sections}${visuals}Use only selected notebook sources. Do not overclaim. Make the artifact useful without requiring the reader to know the backstory.`;
+}
+
+function selectedArtifacts(args) {
+  const requested = args.artifactTypes?.length ? args.artifactTypes : ALL_ARTIFACT_TYPES;
+  return [...new Set(requested)].filter((type) => ALL_ARTIFACT_TYPES.includes(type));
+}
+
+function sourceFocus(args) {
+  return args.sourceTitles?.length
+    ? args.sourceTitles.map((title) => `- ${title}`).join("\n")
+    : "- Use the currently selected sources. If the artifact needs a source that is not selected, say so.";
+}
+
+function sharedArtifactContext(args) {
+  return `Notebook title: ${args.title}
+Objective: ${args.objective}
+Audience: ${args.audience || "People who need a clear, source-grounded answer."}
+Evidence boundary: ${args.evidenceBoundary || "State the evidence boundary from the selected sources before making claims."}
+Working thesis or hypothesis: ${args.thesis || "Identify the strongest source-backed pattern and the strongest caveat."}
+Decision/use: ${args.decisionUse || "Help the reader understand what the evidence supports, what remains uncertain, and what to do next."}
+Tone: ${args.tone || "Clear, specific, practical, and careful with uncertainty."}
+
+Source focus:
+${sourceFocus(args)}
+
+Required facts or numeric anchors:
+${asList(args.keyFacts)}
+
+Required caveats:
+${args.caveats?.length ? asList(args.caveats) : "- Use only selected sources.\n- Mark missing evidence as \"not in source.\"\n- Separate historical frequency, correlation, and prediction.\n- Keep caveats near the claims they qualify."}`;
+}
+
+function artifactSpecificPrompt(type, args) {
+  const context = sharedArtifactContext(args);
+  const title = `${args.title} - ${artifactLabel(type)}`;
+  const guardrail = "Use only selected notebook sources. If a fact, number, or causal claim is not in the sources, write \"not in source\" instead of inferring it.";
+
+  const prompts = {
+    source_pack: `Create a copied-text source pack titled "${title}".
+
+${context}
+
+Include: purpose, evidence boundary, definitions, source inventory, high-confidence facts, assumptions, caveats, missing data, and five grounding questions.
+${guardrail}`,
+
+    source_guide: `Create a Source Guide for "${args.title}".
+
+${context}
+
+For each source, list what it is best for, what it should not be used to prove, important dates or scopes, high-value facts, and conflicts with other sources.
+End with a "best selected-source sets" section for tables, reports, visuals, audio, video, and study aids.
+${guardrail}`,
+
+    chat_grounding: `Answer as a grounding check before any Studio generation.
+
+${context}
+
+Return: current source titles, the five strongest findings, exact numeric anchors, contradictions, weak spots, missing data, and claims that would be overreach.
+Then suggest which sources should be selected for the next artifact.
+${guardrail}`,
+
+    notes: `Create a durable working note titled "${title}".
+
+${context}
+
+Make the note useful as future source material: concise headings, key findings, decision log, open questions, caveats, and prompts to reuse.
+Flag any unsupported or ambiguous claim.
+${guardrail}`,
+
+    data_table: `Create a Data Table titled "${title}".
+
+${context}
+
+Rows should represent the most decision-relevant entities, events, periods, or patterns. Columns must include: item, source/date, metric or claim, value/details, evidence quote or citation cue, confidence, caveat, practical meaning, and follow-up question.
+Design the table so it can be exported to Sheets and audited later.
+${guardrail}`,
+
+    report: `Create a custom report titled "${title}".
+
+${context}
+
+Structure: executive thesis, evidence boundary, pattern summary, evidence table, strongest counter-interpretations, gaps, recommended next questions, and a one-page decision brief.
+Keep numbers exact. Put caveats beside the claims they qualify.
+${guardrail}`,
+
+    briefing_doc: `Create a briefing document titled "${title}".
+
+${context}
+
+Write for a busy decision-maker. Cover: what we know, what changed, why it matters, what is uncertain, decision options, risks, and next best evidence to collect.
+Use tight headings and source-backed language.
+${guardrail}`,
+
+    study_guide: `Create a Study Guide titled "${title}".
+
+${context}
+
+Include learning objectives, key terms, concept map outline, examples from sources, common misconceptions, short-answer practice questions, and an answer key that cites evidence.
+Make uncertainty and limits part of what the learner must understand.
+${guardrail}`,
+
+    faq: `Create an FAQ titled "${title}".
+
+${context}
+
+Prioritize questions a smart skeptical reader would ask. Include direct answers, source-backed details, what is not yet known, and "where to look in the sources" hints.
+Include at least three uncomfortable questions that test the weak points.
+${guardrail}`,
+
+    infographic: `Create an Infographic titled "${title}".
+
+${context}
+
+Use a clear information design: headline insight, three to five visual zones, exact numeric anchors, comparison or timeline where useful, and a visible caveat strip.
+Style should serve the domain; avoid decorative filler. Make it understandable in 30 seconds and still useful in three minutes.
+${guardrail}`,
+
+    slide_deck: `Create a Slide Deck titled "${title}".
+
+${context}
+
+Use a story arc: question, source boundary, top pattern, evidence, comparison, bottleneck or surprise, decision options, caveats, and next data to collect.
+Prefer presenter slides when the deck will be spoken and detailed deck when it must stand alone.
+Each slide should have one job.
+${guardrail}`,
+
+    audio_overview: `Create an Audio Overview titled "${title}".
+
+${context}
+
+Preferred format: Deep Dive unless a brief, critique, or debate better matches the audience. The hosts should sound like careful analysts: warm, plain-spoken, and honest about uncertainty.
+Open with the human question, explain the strongest pattern, challenge it, and end with what a listener should watch next.
+${guardrail}`,
+
+    video_overview: `Create a Video Overview titled "${title}".
+
+${context}
+
+Preferred format: Explainer unless a Brief is better for the audience. Use a visual style that makes structure and evidence legible. Scene order: the human question, source boundary, pattern, evidence, caveat, practical takeaway, next question.
+Name the misconception the video must correct and avoid unsupported dramatization.
+${guardrail}`,
+
+    flashcards: `Create Flashcards titled "${title}".
+
+${context}
+
+Use medium difficulty unless the learner asks otherwise. Include definition cards, application cards, evidence cards, and caveat cards. Include a few "trap" cards where the correct response rejects false precision or unsupported prediction.
+Answers must be short enough to study but specific enough to verify.
+${guardrail}`,
+
+    quiz: `Create a Quiz titled "${title}".
+
+${context}
+
+Use medium-to-hard questions. Mix multiple choice, scenario judgment, and short-answer prompts. Test what the sources support, what they do not support, and how to interpret uncertainty.
+Include explanations that cite the source-backed reasoning.
+${guardrail}`,
+
+    mind_map: `Create or prepare a Mind Map for "${args.title}".
+
+${context}
+
+If direct customization is available, organize branches around: core question, source groups, key patterns, evidence, caveats, decisions, and open questions.
+If customization is not available, use this prompt as a source-selection checklist before generating the map.
+${guardrail}`
+  };
+
+  return prompts[type] || buildStudioPrompt({
+    artifactType: type,
+    title,
+    thesis: args.thesis || args.objective,
+    audience: args.audience,
+    tone: args.tone,
+    requiredNumbers: args.keyFacts,
+    requiredCaveats: args.caveats,
+    decisionUse: args.decisionUse
+  });
+}
+
+function suggestUseCases(args = {}) {
+  const domain = args.domain || "the user's project";
+  const audience = args.audience || "the people using the notebook";
+  const sourceTypes = args.sourceTypes?.length ? args.sourceTypes.join(", ") : "documents, notes, tables, transcripts, web pages, and copied text";
+  const goals = args.goals?.length ? asList(args.goals) : "- Understand a source-backed pattern.\n- Create useful multimedia artifacts.\n- Decide what to do next.";
+  const riskLevel = args.riskLevel || "medium";
+  const count = Math.max(3, Math.min(Number(args.count || 10), 20));
+  const ideas = [
+    ["Decision room", "Turn evidence into a briefing doc, evidence table, options deck, and grounding checks."],
+    ["Pattern detective", "Find recurring time, season, behavior, quality, demand, or risk patterns without pretending they are destiny."],
+    ["Meeting-to-execution hub", "Convert transcripts into owner/action/risk tables, follow-up notes, and stakeholder summaries."],
+    ["Competitive teardown", "Compare products, vendors, pricing, positioning, docs, reviews, and roadmap signals."],
+    ["Study cockpit", "Build a mind map, study guide, misconception quiz, flashcards, and audio review."],
+    ["Research dossier", "Synthesize papers and reports into evidence tables, gaps, and visual abstracts."],
+    ["Onboarding simulator", "Transform policies and workflows into role-specific FAQs, scenario quizzes, and explainer videos."],
+    ["Incident review room", "Assemble timelines, logs, and retrospectives into root-cause tables and corrective-action decks."],
+    ["Creator studio", "Transform a corpus into content outlines, critique audio, visual explainers, and reusable FAQ assets."],
+    ["Customer voice lab", "Analyze calls, tickets, reviews, and surveys into themes, quotes, objections, and scripts."],
+    ["Personal operations notebook", "Organize plans, receipts, manuals, travel details, and preferences into checklists and grounded Q&A."],
+    ["Grant or proposal war room", "Turn requirements, research, budgets, and prior drafts into compliance matrices and reviewer-facing briefs."],
+    ["Policy navigator", "Convert policies, laws, or standards into applicability tables, edge-case FAQs, and training quizzes."],
+    ["Board-pack generator", "Create executive summaries, risk tables, metric narratives, and director Q&A from internal source packs."],
+    ["Product launch brain", "Unify specs, customer research, support risks, and launch notes into a coordinated artifact set."]
+  ];
+  const selected = ideas.slice(0, count);
+  return `# NotebookLM Use Cases for ${domain}
+
+Audience: ${audience}
+Available source types: ${sourceTypes}
+Risk level: ${riskLevel}
+
+Goals:
+${goals}
+
+${selected.map(([name, description], index) => `## ${index + 1}. ${name}
+${description}
+
+Best artifacts: Data Table, briefing doc/report, infographic or slide deck, grounding chat, and one multimedia artifact.
+Prompt move: specify audience, source boundary, exact columns or sections, and what the output should help decide.`).join("\n\n")}
+
+Guardrail: keep every use case source-grounded. For high-risk domains, add a verification note and avoid professional advice claims.`;
+}
+
+function buildArtifactPromptPack(args) {
+  const artifacts = selectedArtifacts(args);
+  const prompts = artifacts.map((type) => `## ${artifactLabel(type)}
+
+\`\`\`text
+${artifactSpecificPrompt(type, args)}
+\`\`\``).join("\n\n");
+  const useCases = args.includeUseCases === false ? "" : `\n\n${suggestUseCases({
+    domain: args.title,
+    audience: args.audience,
+    goals: [args.objective, args.decisionUse || "Create a source-grounded multimedia notebook."],
+    sourceTypes: args.sourceTitles,
+    count: 8
+  })}`;
+
+  return `# Full NotebookLM Artifact Prompt Pack: ${args.title}
+
+Prepared: ${todayIso()}
+
+## Operating Loop
+
+1. Add or select the right sources.
+2. Run the Chat Grounding Check.
+3. Generate Data Table or Report first to stabilize facts.
+4. Generate visual, slide, audio, video, study, and map artifacts with explicit prompts.
+5. Ask a verification question after every artifact that will be shared or used for decisions.
+
+## Shared Context
+
+${sharedArtifactContext(args)}
+
+## Artifact Prompts
+
+${prompts}
+
+## Final Verification Prompt
+
+\`\`\`text
+Using only selected sources, audit the generated artifacts for numeric drift, unsupported claims, missing caveats, source-selection mistakes, and statements that confuse historical patterns with predictions. Return fixes artifact by artifact.
+\`\`\`${useCases}
+`;
 }
 
 function buildRunbook(args) {
@@ -355,8 +808,16 @@ async function callTool(name, args = {}) {
       const text = buildStudioPrompt(args);
       return toolResult(text, { prompt: text });
     }
+    case "build_artifact_prompt_pack": {
+      const text = buildArtifactPromptPack(args);
+      return toolResult(text, { markdown: text, artifacts: selectedArtifacts(args) });
+    }
     case "build_browser_runbook": {
       const text = buildRunbook(args);
+      return toolResult(text, { markdown: text });
+    }
+    case "suggest_notebook_use_cases": {
+      const text = suggestUseCases(args);
       return toolResult(text, { markdown: text });
     }
     case "validate_source_pack": {
@@ -380,6 +841,12 @@ function promptMessages(name, args = {}) {
   }
   if (name === "studio-artifact-director") {
     return `Create a detailed NotebookLM Studio prompt for ${args.artifact || "the requested artifact"}. The prompt must include audience, thesis, exact numeric anchors, caveats, structure, visual directions, and the decision it should support${args.decision ? `: ${args.decision}` : "."}`;
+  }
+  if (name === "full-notebook-generation-plan") {
+    return `Create a full agentic NotebookLM generation plan for ${args.topic || "this topic"}${args.audience ? ` for ${args.audience}` : ""}. Include source packs, source-selection strategy, grounding checks, Data Table, report or briefing document, infographic, slide deck, Audio Overview, Video Overview, flashcards, quiz, mind map, notes, creative use cases, and final verification prompts.`;
+  }
+  if (name === "use-case-brainstorm") {
+    return `Generate creative, source-grounded NotebookLM use cases for ${args.domain || "this domain"}${args.audience ? ` for ${args.audience}` : ""}. For each use case, include source types, best artifacts, a starter prompt, and the verification question that prevents overclaiming.`;
   }
   throw new Error(`Unknown prompt: ${name}`);
 }

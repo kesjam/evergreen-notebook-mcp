@@ -13,6 +13,8 @@ It is designed for any MCP-capable frontier LLM client: Codex-style agents, Clau
 - **Privacy-safe:** no Google auth, no cookies, no hidden NotebookLM API calls.
 - **NotebookLM-native:** optimized for visible UI workflows like **Copied text**, Studio, and chat verification.
 - **Professional outputs:** source packs, Studio prompts, runbooks, prompt templates, validation reports.
+- **Agentic prompt packs:** full source-to-Studio plans for tables, reports, slides, audio, video, infographics, study aids, notes, and mind maps.
+- **Creative use cases:** reusable ideas for decision rooms, pattern analysis, onboarding, research dossiers, customer voice labs, and creator studios.
 - **Public-project friendly:** dependency-free Node server, MIT license, security notes, examples, and agent skill.
 
 ## Why This Exists
@@ -22,6 +24,8 @@ NotebookLM becomes dramatically better when sources are clean and prompts are de
 - turn messy notes into NotebookLM-ready source packs,
 - split long copied-text sources into stable chunks,
 - generate detailed Studio prompts for reports, slides, audio, video, infographics, quizzes, flashcards, and data tables,
+- create complete artifact prompt packs for all major NotebookLM outputs,
+- brainstorm creative, source-grounded notebook use cases,
 - create visible-browser runbooks for safe source ingestion,
 - validate that source packs include evidence boundaries, assumptions, caveats, and missing-data notes.
 
@@ -106,6 +110,12 @@ Or:
 Use evergreen-notebook to create a visible-browser runbook for adding three sources to NotebookLM through Copied text, then generate a report and audio overview with explicit caveats.
 ```
 
+For a full build:
+
+```text
+Use evergreen-notebook to create a complete artifact prompt pack for this NotebookLM project: source pack, source guide, grounding chat, Data Table, report, briefing doc, FAQ, study guide, infographic, slide deck, Audio Overview, Video Overview, quiz, flashcards, notes, mind map, verification prompts, and creative use cases.
+```
+
 ## MCP Tools
 
 ### `build_source_pack`
@@ -130,9 +140,36 @@ Create a detailed NotebookLM Studio prompt for:
 
 The output includes audience, tone, thesis, required numeric anchors, caveats, structure, visual directions, and decision use.
 
+### `build_artifact_prompt_pack`
+
+Create a full source-to-Studio prompt pack for an entire NotebookLM project. It includes prompts for:
+
+- Source Pack
+- Source Guide
+- Chat Grounding Check
+- Notes
+- Data Table
+- Report
+- Briefing Document
+- Study Guide
+- FAQ
+- Infographic
+- Slide Deck
+- Audio Overview
+- Video Overview
+- Flashcards
+- Quiz
+- Mind Map
+
+It also includes a final verification prompt and optional creative use cases.
+
 ### `build_browser_runbook`
 
 Generate a visible-browser workflow for adding sources and creating artifacts. This is useful when the user wants all work to happen through the human-visible NotebookLM UI.
+
+### `suggest_notebook_use_cases`
+
+Generate creative, source-grounded NotebookLM ideas for a domain, audience, and source mix. Use it when a user asks for interesting workflows, "wow me" output ideas, or examples for a public demo.
 
 ### `validate_source_pack`
 
@@ -147,7 +184,7 @@ Check a source pack for missing:
 - caveats,
 - grounding questions.
 
-It also flags deterministic language like “always,” “never,” or “guarantee” when uncertainty should be visible.
+It also flags deterministic language like "always," "never," or "guarantee" when uncertainty should be visible.
 
 ### `split_copied_text_sources`
 
@@ -157,6 +194,9 @@ Split long text into NotebookLM-friendly copied-text chunks with stable part tit
 
 - `google-notebook://workflow`
 - `google-notebook://studio-patterns`
+- `google-notebook://agentic-usage`
+- `google-notebook://artifact-prompt-library`
+- `google-notebook://cool-use-cases`
 - `google-notebook://safety`
 
 ## MCP Prompts
@@ -164,6 +204,12 @@ Split long text into NotebookLM-friendly copied-text chunks with stable part tit
 - `notebook-grounding-check`
 - `source-pack-builder`
 - `studio-artifact-director`
+- `full-notebook-generation-plan`
+- `use-case-brainstorm`
+
+## Research-Backed Guide
+
+See [docs/agentic-notebook-generation.md](docs/agentic-notebook-generation.md) for the full workflow, research basis, artifact prompt library, verification prompts, and creative use cases.
 
 ## Reusable Agent Skill
 

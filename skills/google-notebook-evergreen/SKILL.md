@@ -48,6 +48,10 @@ Use this order for analysis notebooks: Data Table, Infographic, Slide Deck or Re
 
 See `references/studio-prompt-patterns.md` for artifact-specific prompt patterns.
 
+For full notebook builds, multimedia generation, and creative use cases, load `references/agentic-notebook-generation.md`. It includes the source-to-Studio operating loop, prompt anatomy, artifact prompts for every NotebookLM item, verification prompts, and reusable use-case patterns.
+
+When the local MCP is available, prefer `build_artifact_prompt_pack` for complete projects and `suggest_notebook_use_cases` when the user asks for interesting or "wow me" notebook ideas.
+
 ## Verification
 
 After adding sources or generating artifacts:

@@ -38,6 +38,15 @@ send(3, "tools/call", {
     facts: ["The server returned a source pack."]
   }
 });
+send(4, "tools/call", {
+  name: "build_artifact_prompt_pack",
+  arguments: {
+    title: "Smoke Artifact Pack",
+    objective: "Verify full prompt pack output.",
+    artifactTypes: ["data_table", "video_overview"],
+    includeUseCases: false
+  }
+});
 
 await new Promise((resolve) => setTimeout(resolve, 250));
 child.kill();
@@ -46,14 +55,20 @@ await once(child, "close");
 const initialize = responses.find((item) => item.id === 1);
 const tools = responses.find((item) => item.id === 2);
 const call = responses.find((item) => item.id === 3);
+const artifactPack = responses.find((item) => item.id === 4);
 
 if (!initialize?.result?.serverInfo?.name) throw new Error("Missing initialize response");
 if (!tools?.result?.tools?.some((tool) => tool.name === "build_source_pack")) {
   throw new Error("Missing build_source_pack tool");
 }
+if (!tools?.result?.tools?.some((tool) => tool.name === "build_artifact_prompt_pack")) {
+  throw new Error("Missing build_artifact_prompt_pack tool");
+}
 if (!call?.result?.content?.[0]?.text?.includes("# Smoke Test")) {
   throw new Error("Tool call did not return expected source pack");
 }
+if (!artifactPack?.result?.content?.[0]?.text?.includes("Smoke Artifact Pack - Video Overview")) {
+  throw new Error("Artifact prompt pack did not include expected video prompt");
+}
 
 console.log("Smoke test passed");
-

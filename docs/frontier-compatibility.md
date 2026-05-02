@@ -52,6 +52,8 @@ Direct automation is brittle and often privacy-sensitive. This project instead p
 
 - clean copied-text sources,
 - Studio artifact prompts,
+- full artifact prompt packs,
+- creative use-case menus,
 - browser runbooks,
 - grounding questions,
 - validation reports.
@@ -67,4 +69,3 @@ The server:
 - ignores normal initialization and cancellation notifications,
 - accepts both `arguments` and `input` for tool-call payloads,
 - accepts both `arguments` and `args` for prompt payloads.
-
