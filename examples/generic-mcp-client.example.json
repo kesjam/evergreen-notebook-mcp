@@ -1,0 +1,7 @@
+{
+  "name": "evergreen-notebook",
+  "transport": "stdio",
+  "command": "node",
+  "args": ["/absolute/path/to/evergreen-notebook-mcp/server.mjs"]
+}
+

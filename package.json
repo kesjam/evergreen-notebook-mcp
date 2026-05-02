@@ -4,6 +4,15 @@
   "private": false,
   "type": "module",
   "description": "Privacy-safe MCP tools and an agent skill for better NotebookLM workflows.",
+  "author": "Evergreen Notebook MCP contributors",
+  "homepage": "https://github.com/kesjam/evergreen-notebook-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kesjam/evergreen-notebook-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kesjam/evergreen-notebook-mcp/issues"
+  },
   "bin": {
     "evergreen-notebook-mcp": "./server.mjs"
   },
@@ -25,4 +34,3 @@
     "node": ">=18"
   }
 }
-

@@ -5,14 +5,18 @@ description: Use this whenever the user asks to create, populate, maintain, prom
 
 # Google Notebook Evergreen
 
-Use this skill for durable NotebookLM work: clean sources first, visible browser actions second, Studio artifacts with explicit prompts, and verification last.
+Use this skill for durable NotebookLM work across frontier LLM agents: clean sources first, visible browser actions second, Studio artifacts with explicit prompts, and verification last.
 
 ## Decide the path
 
 1. **Personal NotebookLM** (`notebooklm.google.com`): prefer the visible browser UI. Use browser tools to click, paste, inspect, and screenshot. Do not use hidden work-site APIs.
 2. **NotebookLM Enterprise** (`notebooklm.cloud.google.com`): use official APIs only after the user confirms Enterprise access, project, location, and auth context.
-3. **Local MCP**: use `google-notebook-evergreen` to prepare source packs, Studio prompts, grounding questions, and browser runbooks. This MCP is intentionally local and does not log in, scrape NotebookLM, or touch Google cookies.
+3. **Local MCP**: use `evergreen-notebook` / `evergreen-notebook-mcp` to prepare source packs, Studio prompts, grounding questions, and browser runbooks. This MCP is intentionally local and does not log in, scrape NotebookLM, or touch Google cookies.
 4. **Unofficial NotebookLM MCPs**: use only if the user explicitly asks for cookie/browser-state automation.
+
+## Frontier-client compatibility
+
+Prefer the local MCP when a client can launch stdio MCP servers. It is model-neutral and works by generating text artifacts rather than controlling NotebookLM directly. If the MCP is unavailable, follow the same workflow manually with browser tools and local files.
 
 ## Source workflow
 
@@ -61,4 +65,3 @@ After adding sources or generating artifacts:
 - Do not claim NotebookLM can predict real-world events that are inherently uncertain.
 - Do not bury caveats in appendices; place them near the claim they qualify.
 - Prefer creating local source packs and prompts over broad web ingestion.
-

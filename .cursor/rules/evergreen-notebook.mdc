@@ -1,0 +1,15 @@
+---
+description: Evergreen Notebook MCP project rules
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+This repo is a privacy-safe MCP server and skill for NotebookLM workflows.
+
+- Keep the MCP server dependency-free and stdio-compatible.
+- Do not add Google auth, cookie scraping, or private NotebookLM API calls.
+- Keep examples synthetic and public-safe.
+- Run `npm run check` and `npm run smoke` after code changes.
+- Preserve the distinction between historical evidence and prediction.
+

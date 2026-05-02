@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const SERVER_NAME = "google-notebook-evergreen";
-const SERVER_VERSION = "1.0.0";
+const SERVER_NAME = "evergreen-notebook-mcp";
+const SERVER_VERSION = "0.1.0";
 const DEFAULT_PROTOCOL = "2025-11-25";
 
 const resources = {
@@ -52,6 +52,10 @@ const toolDefinitions = [
     name: "build_source_pack",
     title: "Build Notebook Source Pack",
     description: "Create a clean Markdown source pack for NotebookLM Copied text ingestion.",
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: true
+    },
     inputSchema: {
       type: "object",
       additionalProperties: false,
@@ -76,6 +80,10 @@ const toolDefinitions = [
     name: "build_studio_prompt",
     title: "Build Studio Prompt",
     description: "Create a detailed NotebookLM Studio prompt for a specific artifact.",
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: true
+    },
     inputSchema: {
       type: "object",
       additionalProperties: false,
@@ -101,6 +109,10 @@ const toolDefinitions = [
     name: "build_browser_runbook",
     title: "Build Notebook Browser Runbook",
     description: "Generate a safe visible-browser runbook for adding sources and generating Studio artifacts.",
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: true
+    },
     inputSchema: {
       type: "object",
       additionalProperties: false,
@@ -117,6 +129,10 @@ const toolDefinitions = [
     name: "validate_source_pack",
     title: "Validate Notebook Source Pack",
     description: "Check a source pack for missing objective, evidence boundary, caveats, assumptions, definitions, and overclaiming risks.",
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: true
+    },
     inputSchema: {
       type: "object",
       additionalProperties: false,
@@ -131,6 +147,10 @@ const toolDefinitions = [
     name: "split_copied_text_sources",
     title: "Split Copied Text Sources",
     description: "Split long text into NotebookLM Copied text chunks with stable titles.",
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: true
+    },
     inputSchema: {
       type: "object",
       additionalProperties: false,
@@ -386,19 +406,20 @@ async function handle(request) {
       return success(id, {
         protocolVersion: params.protocolVersion || DEFAULT_PROTOCOL,
         capabilities: {
-          tools: {},
-          resources: {},
-          prompts: {}
+          tools: { listChanged: false },
+          resources: { subscribe: false, listChanged: false },
+          prompts: { listChanged: false }
         },
         serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
-        instructions: "Prepare Google NotebookLM source packs, Studio prompts, browser runbooks, and verification prompts. This server does not log in to Google or call NotebookLM APIs."
+        instructions: "Prepare Google NotebookLM source packs, Studio prompts, browser runbooks, and verification prompts. This server is frontier-model friendly, stdio-only, local-first, dependency-free, and does not log in to Google or call NotebookLM APIs."
       });
     }
     if (method === "notifications/initialized") return;
+    if (method === "notifications/cancelled") return;
     if (method === "ping") return success(id, {});
     if (method === "tools/list") return success(id, { tools: toolDefinitions });
     if (method === "tools/call") {
-      const result = await callTool(params.name, params.arguments || {});
+      const result = await callTool(params.name, params.arguments || params.input || {});
       return success(id, result);
     }
     if (method === "resources/list") {
@@ -416,9 +437,10 @@ async function handle(request) {
       if (!resource) throw new Error(`Unknown resource: ${params.uri}`);
       return success(id, { contents: [{ uri: params.uri, mimeType: resource.mimeType, text: resource.text }] });
     }
+    if (method === "resources/templates/list") return success(id, { resourceTemplates: [] });
     if (method === "prompts/list") return success(id, { prompts: promptDefinitions });
     if (method === "prompts/get") {
-      const text = promptMessages(params.name, params.arguments || {});
+      const text = promptMessages(params.name, params.arguments || params.args || {});
       return success(id, {
         description: promptDefinitions.find((prompt) => prompt.name === params.name)?.description || params.name,
         messages: [{ role: "user", content: { type: "text", text } }]
@@ -456,4 +478,3 @@ process.stdin.on("end", () => {
     }
   }
 });
-
